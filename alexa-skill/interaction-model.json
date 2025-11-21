@@ -1,0 +1,74 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "calendario inteligente",
+      "intents": [
+        {
+          "name": "LaunchRequest"
+        },
+        {
+          "name": "ChatGPTIntent",
+          "slots": [
+            {
+              "name": "question",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "pregúntale a ChatGPT {question}",
+            "consulta {question}",
+            "dime {question}",
+            "pregunta {question}",
+            "qué opinas de {question}",
+            "ayúdame con {question}"
+          ]
+        },
+        {
+          "name": "AddTaskIntent",
+          "slots": [
+            {
+              "name": "task",
+              "type": "AMAZON.SearchQuery"
+            },
+            {
+              "name": "date",
+              "type": "AMAZON.DATE"
+            }
+          ],
+          "samples": [
+            "agrega la tarea {task} para {date}",
+            "crea una tarea {task} el {date}",
+            "añade {task} para el {date}",
+            "programa {task} para {date}",
+            "recordar {task} el {date}",
+            "tengo que {task} el {date}"
+          ]
+        },
+        {
+          "name": "GetTasksIntent",
+          "samples": [
+            "cuáles son mis tareas",
+            "qué tengo programado",
+            "muéstrame mi calendario",
+            "qué tareas tengo",
+            "revisa mi agenda",
+            "qué actividades tengo"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        }
+      ],
+      "types": []
+    }
+  }
+}

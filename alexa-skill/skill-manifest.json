@@ -1,0 +1,94 @@
+{
+  "manifest": {
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "https://tu-dominio.com/api/alexa"
+        },
+        "interfaces": [],
+        "regions": {
+          "NA": {
+            "endpoint": {
+              "uri": "https://tu-dominio.com/api/alexa"
+            }
+          },
+          "EU": {
+            "endpoint": {
+              "uri": "https://tu-dominio.com/api/alexa"
+            }
+          },
+          "FE": {
+            "endpoint": {
+              "uri": "https://tu-dominio.com/api/alexa"
+            }
+          }
+        }
+      }
+    },
+    "manifestVersion": "1.0",
+    "permissions": [],
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "locales": {
+        "es-ES": {
+          "privacyPolicyUrl": "https://tu-dominio.com/privacy",
+          "termsOfUseUrl": "https://tu-dominio.com/terms"
+        },
+        "es-MX": {
+          "privacyPolicyUrl": "https://tu-dominio.com/privacy",
+          "termsOfUseUrl": "https://tu-dominio.com/terms"
+        }
+      },
+      "isExportCompliant": true,
+      "containsAds": false,
+      "isChildDirected": false,
+      "usesPersonalInfo": false
+    },
+    "publishingInformation": {
+      "locales": {
+        "es-ES": {
+          "summary": "Gestiona tu calendario con la ayuda de ChatGPT",
+          "examplePhrases": [
+            "Alexa, abre calendario inteligente",
+            "Alexa, pregúntale a calendario inteligente cuáles son mis tareas",
+            "Alexa, dile a calendario inteligente que agregue estudiar para mañana"
+          ],
+          "keywords": [
+            "calendario",
+            "tareas",
+            "productividad",
+            "chatgpt",
+            "organizador"
+          ],
+          "name": "Calendario Inteligente con ChatGPT",
+          "description": "Una skill avanzada que combina la gestión de calendario con la inteligencia artificial de ChatGPT. Puedes crear tareas, consultar tu agenda y recibir consejos de productividad, todo por voz. La skill se conecta con una interfaz web completa donde puedes ver tu calendario, gestionar tareas y ganar puntos por completar actividades.",
+          "largeIconUri": "https://tu-dominio.com/icons/large-icon.png",
+          "smallIconUri": "https://tu-dominio.com/icons/small-icon.png"
+        },
+        "es-MX": {
+          "summary": "Gestiona tu calendario con la ayuda de ChatGPT",
+          "examplePhrases": [
+            "Alexa, abre calendario inteligente",
+            "Alexa, pregúntale a calendario inteligente cuáles son mis tareas",
+            "Alexa, dile a calendario inteligente que agregue estudiar para mañana"
+          ],
+          "keywords": [
+            "calendario",
+            "tareas",
+            "productividad",
+            "chatgpt",
+            "organizador"
+          ],
+          "name": "Calendario Inteligente con ChatGPT",
+          "description": "Una skill avanzada que combina la gestión de calendario con la inteligencia artificial de ChatGPT. Puedes crear tareas, consultar tu agenda y recibir consejos de productividad, todo por voz. La skill se conecta con una interfaz web completa donde puedes ver tu calendario, gestionar tareas y ganar puntos por completar actividades.",
+          "largeIconUri": "https://tu-dominio.com/icons/large-icon.png",
+          "smallIconUri": "https://tu-dominio.com/icons/small-icon.png"
+        }
+      },
+      "isAvailableWorldwide": false,
+      "testingInstructions": "Para probar la skill, usa los comandos de ejemplo. Necesitarás configurar las credenciales de OpenAI en el backend.",
+      "category": "PRODUCTIVITY",
+      "distributionCountries": ["ES", "MX", "AR", "CO", "PE", "CL", "UY", "EC", "BO", "PY", "VE", "GT", "HN", "SV", "NI", "CR", "PA", "CU", "DO", "PR"]
+    }
+  }
+}
