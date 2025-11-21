@@ -1,5 +1,6 @@
 # AWS Deployment Script for Alexa ChatGPT Calendar Skill
 # PowerShell Script for Windows Deployment
+# Repositorio: https://github.com/DaveVelazquez/alexa-chatgpt-calendar
 
 param(
     [string]$OpenAIApiKey = "",
@@ -9,11 +10,43 @@ param(
     [switch]$Build = $true,
     [switch]$Package = $true,
     [switch]$Deploy = $true,
-    [switch]$UploadFrontend = $true
+    [switch]$UploadFrontend = $true,
+    [switch]$Help = $false
 )
+
+if ($Help) {
+    Write-Host "🚀 Alexa ChatGPT Calendar Skill - AWS Deployment Script" -ForegroundColor Green
+    Write-Host "=====================================================" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "USO:" -ForegroundColor Yellow
+    Write-Host "  .\deploy-aws.ps1 -OpenAIApiKey 'sk-proj-tu-api-key' -Guided" -ForegroundColor White
+    Write-Host ""
+    Write-Host "PARÁMETROS:" -ForegroundColor Cyan
+    Write-Host "  -OpenAIApiKey    Tu API Key de OpenAI (obligatorio)" -ForegroundColor White
+    Write-Host "  -StackName       Nombre del stack AWS (default: alexa-chatgpt-calendar)" -ForegroundColor Gray
+    Write-Host "  -Region          Región AWS (default: us-east-1)" -ForegroundColor Gray
+    Write-Host "  -Guided          Modo interactivo (recomendado para primera vez)" -ForegroundColor White
+    Write-Host "  -Help            Mostrar esta ayuda" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "EJEMPLOS:" -ForegroundColor Yellow
+    Write-Host "  # Primera instalación (recomendado)" -ForegroundColor Gray
+    Write-Host "  .\deploy-aws.ps1 -OpenAIApiKey 'sk-proj-...' -Guided" -ForegroundColor White
+    Write-Host ""
+    Write-Host "  # Actualización rápida" -ForegroundColor Gray
+    Write-Host "  .\deploy-aws.ps1 -OpenAIApiKey 'sk-proj-...'" -ForegroundColor White
+    Write-Host ""
+    Write-Host "REQUISITOS PREVIOS:" -ForegroundColor Red
+    Write-Host "  1. AWS CLI instalado y configurado (aws configure)" -ForegroundColor White
+    Write-Host "  2. SAM CLI instalado (pip install aws-sam-cli)" -ForegroundColor White
+    Write-Host "  3. Node.js instalado" -ForegroundColor White
+    Write-Host "  4. OpenAI API Key válida" -ForegroundColor White
+    Write-Host ""
+    exit 0
+}
 
 Write-Host "🚀 Alexa ChatGPT Calendar Skill - AWS Deployment Script" -ForegroundColor Green
 Write-Host "===================================================" -ForegroundColor Green
+Write-Host "📁 Repositorio: https://github.com/DaveVelazquez/alexa-chatgpt-calendar" -ForegroundColor Gray
 
 # Check if AWS CLI is installed
 try {

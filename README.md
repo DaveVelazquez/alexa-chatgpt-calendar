@@ -291,7 +291,49 @@ Utiliza las herramientas de desarrollo del navegador para:
 - Rate limiting (recomendado para producción)
 - CORS configurado para desarrollo
 
-## 🚀 Despliegue en Producción
+## 🚀 Despliegue en AWS (Serverless)
+
+### Paso 1: Clonar Repositorio
+```bash
+git clone https://github.com/DaveVelazquez/alexa-chatgpt-calendar.git
+cd alexa-chatgpt-calendar
+```
+
+### Paso 2: Configurar AWS CLI
+```bash
+aws configure
+# Introduce: Access Key, Secret Key, Region (us-east-1), Format (json)
+```
+
+### Paso 3: Desplegar Automáticamente
+
+#### Windows (PowerShell)
+```powershell
+.\deploy-aws.ps1 -OpenAIApiKey "sk-proj-tu-api-key-completa" -Guided
+```
+
+#### Linux/Mac
+```bash
+./scripts/deploy-aws.sh --guided
+```
+
+#### Manual (Cualquier sistema)
+```bash
+npm run install:all
+sam build
+sam deploy --guided
+```
+
+### ¿Qué se despliega automáticamente?
+- **Lambda Function**: Backend Node.js serverless
+- **API Gateway**: Endpoints REST públicos  
+- **S3 + CloudFront**: Frontend React con CDN
+- **DynamoDB**: Base de datos NoSQL (2 tablas)
+- **IAM Roles**: Permisos mínimos necesarios
+
+📚 **Documentación completa**: [DEPLOYMENT.md](DEPLOYMENT.md)
+
+## 🚀 Despliegue Tradicional (Opcional)
 
 ### Backend (Heroku/Railway/DigitalOcean)
 1. Configurar variables de entorno

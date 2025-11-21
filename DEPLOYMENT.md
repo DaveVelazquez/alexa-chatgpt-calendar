@@ -51,8 +51,33 @@ CloudFront (CDN)
 
 ## 🛠️ Guía de Despliegue
 
-### Paso 1: Requisitos Previos
+### Paso 1: Clonar el Repositorio
 
+```powershell
+# Clonar desde GitHub
+git clone https://github.com/DaveVelazquez/alexa-chatgpt-calendar.git
+cd alexa-chatgpt-calendar
+```
+
+### Paso 2: Requisitos Previos
+
+#### Windows (PowerShell)
+```powershell
+# 1. Instalar AWS CLI
+# Descarga desde: https://aws.amazon.com/cli/
+# O usar Chocolatey:
+choco install awscli
+
+# 2. Instalar SAM CLI
+pip install aws-sam-cli
+# O usar Chocolatey:
+choco install aws-sam-cli
+
+# 3. Configurar AWS
+aws configure
+```
+
+#### Linux/Mac
 ```bash
 # 1. Instalar AWS CLI
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awsclip.zip"
@@ -65,44 +90,67 @@ pip install aws-sam-cli
 aws configure
 ```
 
-**Datos necesarios:**
+**Datos necesarios para AWS Configure:**
 - AWS Access Key ID
 - AWS Secret Access Key  
 - Default region: `us-east-1` (recomendado para Alexa)
 - Output format: `json`
 
-### Paso 2: Preparar el Proyecto
+### Paso 3: Preparar el Proyecto
 
-```bash
-# 1. Construir el frontend
-npm run build
+#### Windows (Recomendado)
+```powershell
+# 1. Instalar dependencias
+npm run install:all
 
-# 2. Generar paquete de despliegue
-npm run package:lambda
-
-# El script creará:
-# - deploy/ - Archivos listos para AWS
-# - alexa-chatgpt-calendar-aws.zip - Paquete completo
+# 2. Desplegar automáticamente con script PowerShell
+.\deploy-aws.ps1 -OpenAIApiKey "sk-tu-api-key-aqui" -Guided
 ```
 
-### Paso 3: Desplegar con SAM
-
-#### Opción A: Despliegue Guiado (Recomendado)
+#### Manual (Todos los sistemas)
 ```bash
+# 1. Instalar dependencias del servidor
+cd server && npm install && cd ..
+
+# 2. Instalar dependencias del cliente
+cd client && npm install && cd ..
+
+# 3. Construir el frontend
+cd client && npm run build && cd ..
+
+# 4. Continuar con pasos SAM
+```
+
+### Paso 4: Opciones de Despliegue
+
+#### Opción A: Script PowerShell Automatizado (Windows - Recomendado)
+```powershell
+# Despliegue completo automatizado
+.\deploy-aws.ps1 -OpenAIApiKey "sk-proj-tu-api-key-completa" -Guided
+
+# O sin modo guiado
+.\deploy-aws.ps1 -OpenAIApiKey "sk-proj-tu-api-key-completa"
+```
+
+#### Opción B: SAM Manual (Todos los sistemas)
+```bash
+# 1. Construir aplicación
 sam build
+
+# 2. Desplegar con configuración guiada
 sam deploy --guided
 ```
 
-Responde las preguntas:
+**Responde las preguntas del deploy guiado:**
 - **Stack Name**: `alexa-chatgpt-calendar`
 - **AWS Region**: `us-east-1`
 - **Parameter Environment**: `prod`
-- **Parameter OpenAIApiKey**: `sk-tu-api-key-aqui`
+- **Parameter OpenAIApiKey**: `sk-proj-tu-api-key-completa`
 - **Confirm changes**: `Y`
 - **Allow SAM CLI IAM role creation**: `Y`
 - **Save parameters to config file**: `Y`
 
-#### Opción B: Despliegue Automático
+#### Opción C: Script Bash (Linux/Mac)
 ```bash
 # Usar script automatizado
 ./scripts/deploy-aws.sh --guided
@@ -276,26 +324,43 @@ aws ssm put-parameter \
 
 ## 🆘 Solución de Problemas
 
-### Error Común: "Internal Server Error"
-```bash
+### Error: "Repository not found" al clonar
+```powershell
+# Verificar URL correcta
+git clone https://github.com/DaveVelazquez/alexa-chatgpt-calendar.git
+```
+
+### Error: AWS CLI no configurado
+```powershell
+# Configurar credenciales AWS
+aws configure
+# Verificar configuración
+aws sts get-caller-identity
+```
+
+### Error: "Internal Server Error" después del deploy
+```powershell
 # Ver logs de Lambda
-aws logs tail /aws/lambda/alexa-chatgpt-backend-prod --follow
+aws logs tail /aws/lambda/alexa-chatgpt-calendar-AlexaChatGPTFunction-* --follow
 
 # Verificar variables de entorno
-aws lambda get-function-configuration \
-  --function-name alexa-chatgpt-backend-prod
+aws lambda get-function-configuration --function-name alexa-chatgpt-calendar-*
 ```
 
 ### Error: "Access Denied" en S3
-```bash
-# Verificar política del bucket
-aws s3api get-bucket-policy --bucket tu-bucket-name
+```powershell
+# Verificar que el bucket se creó correctamente
+aws s3 ls | findstr alexa-chatgpt
+
+# Subir frontend manualmente si es necesario
+aws s3 sync client/build/ s3://tu-bucket-name/ --delete
 ```
 
 ### Alexa Skill No Responde
-1. Verificar endpoint en Developer Console
-2. Comprobar logs de Lambda
-3. Validar interaction model
+1. Verificar endpoint en Developer Console con el ARN correcto
+2. Comprobar logs de Lambda en CloudWatch
+3. Validar interaction model en Alexa Console
+4. Verificar que OpenAI API Key está configurada correctamente
 
 ## 📞 Soporte
 
