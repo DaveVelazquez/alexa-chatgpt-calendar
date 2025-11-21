@@ -28,7 +28,7 @@
           "slots": [
             {
               "name": "task",
-              "type": "AMAZON.SearchQuery"
+              "type": "TASK_TYPE"
             },
             {
               "name": "date",
@@ -41,7 +41,12 @@
             "añade {task} para el {date}",
             "programa {task} para {date}",
             "recordar {task} el {date}",
-            "tengo que {task} el {date}"
+            "tengo que {task} el {date}",
+            "agrega {task}",
+            "crea la tarea {task}",
+            "añade {task}",
+            "programa {task}",
+            "recordar {task}"
           ]
         },
         {
@@ -66,9 +71,92 @@
         {
           "name": "AMAZON.CancelIntent",
           "samples": []
+        },
+        {
+          "name": "CompleteTaskIntent",
+          "slots": [
+            {
+              "name": "task",
+              "type": "TASK_TYPE"
+            }
+          ],
+          "samples": [
+            "completé {task}",
+            "terminé {task}",
+            "finalicé {task}",
+            "hice {task}",
+            "completar {task}",
+            "marcar como hecho {task}"
+          ]
+        },
+        {
+          "name": "GetTodayTasksIntent",
+          "samples": [
+            "qué tengo hoy",
+            "tareas de hoy",
+            "qué hay para hoy",
+            "mi agenda de hoy",
+            "actividades de hoy"
+          ]
         }
       ],
-      "types": []
+      "types": [
+        {
+          "name": "TASK_TYPE",
+          "values": [
+            {
+              "name": {
+                "value": "hacer ejercicio"
+              }
+            },
+            {
+              "name": {
+                "value": "comprar comida"
+              }
+            },
+            {
+              "name": {
+                "value": "llamar al doctor"
+              }
+            },
+            {
+              "name": {
+                "value": "reunión de trabajo"
+              }
+            },
+            {
+              "name": {
+                "value": "estudiar"
+              }
+            },
+            {
+              "name": {
+                "value": "limpiar casa"
+              }
+            },
+            {
+              "name": {
+                "value": "pagar facturas"
+              }
+            },
+            {
+              "name": {
+                "value": "revisar emails"
+              }
+            },
+            {
+              "name": {
+                "value": "hacer la compra"
+              }
+            },
+            {
+              "name": {
+                "value": "pasear al perro"
+              }
+            }
+          ]
+        }
+      ]
     }
   }
 }

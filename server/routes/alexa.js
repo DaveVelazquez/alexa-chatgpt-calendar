@@ -89,14 +89,53 @@ const ChatGPTIntentHandler = {
   }
 };
 
-const CalendarIntentHandler = {
+const AddTaskIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && (handlerInput.requestEnvelope.request.intent.name === 'AddTaskIntent' ||
-          handlerInput.requestEnvelope.request.intent.name === 'GetTasksIntent');
+      && handlerInput.requestEnvelope.request.intent.name === 'AddTaskIntent';
   },
   async handle(handlerInput) {
-    const intentName = handlerInput.requestEnvelope.request.intent.name;
+    try {
+      const task = handlerInput.requestEnvelope.request.intent.slots.task?.value;
+      const date = handlerInput.requestEnvelope.request.intent.slots.date?.value;
+      
+      if (!task) {
+        const speakOutput = 'No escuché qué tarea quieres agregar. ¿Podrías repetir?';
+        return handlerInput.responseBuilder
+          .speak(speakOutput)
+          .reprompt(speakOutput)
+          .getResponse();
+      }
+      
+      const axios = require('axios');
+      await axios.post('http://localhost:3001/api/calendar/tasks', {
+        title: task,
+        date: date || new Date().toISOString().split('T')[0]
+      });
+      
+      const speakOutput = date 
+        ? `He agregado la tarea "${task}" para el ${date}.`
+        : `He agregado la tarea "${task}" para hoy.`;
+      
+      return handlerInput.responseBuilder
+        .speak(speakOutput)
+        .getResponse();
+    } catch (error) {
+      const speakOutput = 'Hubo un problema al agregar la tarea.';
+      
+      return handlerInput.responseBuilder
+        .speak(speakOutput)
+        .getResponse();
+    }
+  }
+};
+
+const GetTasksIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'GetTasksIntent';
+  },
+  async handle(handlerInput) {
     
     try {
       if (intentName === 'AddTaskIntent') {
@@ -185,12 +224,13 @@ const CustomErrorHandler = {
   }
 };
 
-// Skill Builder
+// Skill Builder  
 const skillBuilder = SkillBuilders.custom()
   .addRequestHandlers(
     LaunchRequestHandler,
     ChatGPTIntentHandler,
-    CalendarIntentHandler,
+    AddTaskIntentHandler,
+    GetTasksIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler
   )
