@@ -4,9 +4,6 @@
       "invocationName": "calendario inteligente",
       "intents": [
         {
-          "name": "LaunchRequest"
-        },
-        {
           "name": "ChatGPTIntent",
           "slots": [
             {
@@ -98,6 +95,10 @@
             "mi agenda de hoy",
             "actividades de hoy"
           ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
         }
       ],
       "types": [
