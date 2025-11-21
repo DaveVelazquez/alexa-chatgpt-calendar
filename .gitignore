@@ -117,3 +117,18 @@ dist/
 # Client specific
 client/build/
 client/dist/
+
+# AWS SAM
+.aws-sam/
+samconfig.toml.backup
+
+# Deployment packages
+deploy/
+*.zip
+alexa-chatgpt-calendar-aws.zip
+
+# DynamoDB Local files
+.dynamodb/
+
+# Serverless directories
+.serverless/
