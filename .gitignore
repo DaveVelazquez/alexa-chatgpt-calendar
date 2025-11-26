@@ -126,9 +126,17 @@ samconfig.toml.backup
 deploy/
 *.zip
 alexa-chatgpt-calendar-aws.zip
+lambda-deploy.zip
+lambda-apl.zip
 
 # DynamoDB Local files
 .dynamodb/
 
 # Serverless directories
 .serverless/
+
+# GitHub Actions
+.github/workflows/*.local.yml
+
+# Test responses
+response.json

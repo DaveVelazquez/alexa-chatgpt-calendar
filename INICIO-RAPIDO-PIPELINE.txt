@@ -1,0 +1,163 @@
+═══════════════════════════════════════════════════════════
+  ✅ PIPELINE CI/CD CREADO - SIGUE ESTOS PASOS
+═══════════════════════════════════════════════════════════
+
+📄 GUÍA COMPLETA: PASOS-INTEGRACION-PIPELINE.md
+
+═══════════════════════════════════════════════════════════
+
+🎯 PASO 1: Instalar GitHub CLI (2 minutos)
+───────────────────────────────────────────────────────────
+
+Abre PowerShell y ejecuta:
+
+    winget install GitHub.cli
+
+Luego CIERRA y ABRE PowerShell de nuevo.
+
+═══════════════════════════════════════════════════════════
+
+🎯 PASO 2: Autenticarte en GitHub (1 minuto)
+───────────────────────────────────────────────────────────
+
+Ejecuta:
+
+    gh auth login
+
+Selecciona:
+  → GitHub.com (Enter)
+  → HTTPS (Enter)
+  → Yes (Y)
+  → Login with browser (Enter)
+
+Copia el código, pégalo en el navegador y autoriza.
+
+═══════════════════════════════════════════════════════════
+
+🎯 PASO 3: Usar Usuario AWS IAM Existente (1 minuto)
+───────────────────────────────────────────────────────────
+
+✅ YA TIENES UN USUARIO IAM CREADO:
+
+   Usuario: github-ci
+   ARN: arn:aws:iam::507297234735:user/github-ci
+   Access Key ID: AKIAXMHKFP4XXEPAI2U2 (Active)
+   Cuenta AWS: 507297234735
+   Console: https://507297234735.signin.aws.amazon.com/console
+
+⚠️ NECESITAS EL SECRET ACCESS KEY:
+
+   Si NO tienes el Secret Access Key guardado:
+   1. Ve a: https://console.aws.amazon.com/iam/
+   2. Click en usuario "github-ci"
+   3. Tab "Security credentials"
+   4. En "Access keys" → "Create access key"
+   5. Tipo: "Application running outside AWS"
+   6. GUARDA el Secret Access Key (solo se muestra una vez)
+
+═══════════════════════════════════════════════════════════
+
+🎯 PASO 4: Configurar GitHub Secrets (3 minutos)
+───────────────────────────────────────────────────────────
+
+Ejecuta el script:
+
+    cd "c:\dev\GPT 21"
+    .\scripts\setup-github-secrets.ps1
+
+Cuando te pida cada secret, ingresa:
+
+  AWS_ACCESS_KEY_ID: 
+    → AKIAXMHKFP4XXEPAI2U2
+
+  AWS_SECRET_ACCESS_KEY: 
+    → Tu secret key del usuario github-ci
+      (si no lo tienes, créalo nuevo en IAM Console)
+
+  OPENAI_API_KEY: 
+    → Del archivo server/.env (sk-proj-...)
+
+  ALEXA_SKILL_ID: 
+    → https://developer.amazon.com/alexa/console/ask
+    → Tu skill → Build → Endpoint
+    → Copia el ID (amzn1.ask.skill...)
+
+  MONGODB_URI: 
+    → Del archivo server/.env (mongodb://...)
+
+═══════════════════════════════════════════════════════════
+
+🎯 PASO 5: Commit y Push (2 minutos)
+───────────────────────────────────────────────────────────
+
+Ejecuta estos comandos:
+
+    git add .github/ scripts/ PIPELINE*.md PASOS*.md
+    git add .gitignore FUNCIONANDO.md server/routes/alexa.js
+    
+    git commit -m "Add CI/CD pipeline for automatic AWS deployment"
+    
+    git push origin main
+
+═══════════════════════════════════════════════════════════
+
+🎯 PASO 6: Monitorear Deploy (3-5 minutos)
+───────────────────────────────────────────────────────────
+
+Ver en tiempo real:
+
+    gh run watch
+
+O en el navegador:
+
+    https://github.com/DaveVelazquez/alexa-chatgpt-calendar/actions
+
+Espera a ver ✅ "Deployment completed successfully"
+
+═══════════════════════════════════════════════════════════
+
+🎯 PASO 7: Verificar en AWS Lambda (1 minuto)
+───────────────────────────────────────────────────────────
+
+1. Ve a: https://console.aws.amazon.com/lambda
+
+2. Busca tu función: alexa-chatgpt-calendar
+
+3. Verifica "Last modified" sea reciente
+
+4. ✅ ¡Tu código está en AWS!
+
+═══════════════════════════════════════════════════════════
+
+🎯 PASO 8: Probar Alexa Skill (2 minutos)
+───────────────────────────────────────────────────────────
+
+1. Ve a: https://developer.amazon.com/alexa/console/ask
+
+2. Abre tu skill "Calendario Inteligente"
+
+3. Tab "Test" → Escribe: "abre calendario inteligente"
+
+4. ✅ Deberías ver la respuesta de bienvenida
+
+═══════════════════════════════════════════════════════════
+
+🎉 ¡LISTO! PIPELINE INTEGRADO
+═══════════════════════════════════════════════════════════
+
+Ahora cada vez que hagas cambios:
+
+    git add .
+    git commit -m "Update code"
+    git push origin main
+
+¡Se despliega automáticamente a AWS! 🚀
+
+═══════════════════════════════════════════════════════════
+
+🆘 ¿PROBLEMAS?
+
+Lee el archivo completo: PASOS-INTEGRACION-PIPELINE.md
+Tiene troubleshooting detallado para cada error común.
+
+═══════════════════════════════════════════════════════════

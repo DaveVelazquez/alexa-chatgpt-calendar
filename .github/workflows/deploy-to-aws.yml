@@ -1,0 +1,109 @@
+name: Deploy to AWS Lambda
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Permite ejecutar manualmente desde GitHub
+
+env:
+  AWS_REGION: us-east-1
+  LAMBDA_FUNCTION_NAME: alexa-chatgpt-calendar
+  NODE_VERSION: '18'
+
+jobs:
+  deploy:
+    name: Deploy to AWS Lambda
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: 📦 Install server dependencies
+        working-directory: ./server
+        run: npm ci --production
+
+      - name: 🔐 Create .env file
+        working-directory: ./server
+        run: |
+          echo "PORT=3001" >> .env
+          echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> .env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "OPENAI_MODEL=gpt-3.5-turbo" >> .env
+          echo "ALEXA_SKILL_ID=${{ secrets.ALEXA_SKILL_ID }}" >> .env
+
+      - name: 📦 Create deployment package
+        working-directory: ./server
+        run: |
+          zip -r ../lambda-deploy.zip . -x "*.git*" -x "node_modules/@types/*" -x "*.md"
+          echo "Package size: $(du -h ../lambda-deploy.zip | cut -f1)"
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 🚀 Deploy to Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
+            --zip-file fileb://lambda-deploy.zip \
+            --no-cli-pager
+          
+          echo "✅ Lambda function updated successfully!"
+
+      - name: ⏳ Wait for Lambda to be ready
+        run: |
+          echo "Waiting for Lambda function to be ready..."
+          aws lambda wait function-updated \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
+          echo "✅ Lambda function is ready!"
+
+      - name: 🧪 Test Lambda function
+        run: |
+          echo "Testing Lambda function..."
+          aws lambda invoke \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
+            --payload '{"version":"1.0","session":{"new":true},"request":{"type":"LaunchRequest"}}' \
+            --no-cli-pager \
+            response.json
+          
+          if [ -f response.json ]; then
+            echo "✅ Lambda test successful!"
+            cat response.json
+          else
+            echo "❌ Lambda test failed!"
+            exit 1
+          fi
+
+      - name: 📊 Get Lambda info
+        run: |
+          echo "Lambda function details:"
+          aws lambda get-function \
+            --function-name ${{ env.LAMBDA_FUNCTION_NAME }} \
+            --query 'Configuration.[FunctionName,Runtime,LastModified,CodeSize]' \
+            --output table
+
+      - name: 💬 Post deployment notification
+        if: success()
+        run: |
+          echo "🎉 Deployment completed successfully!"
+          echo "Function: ${{ env.LAMBDA_FUNCTION_NAME }}"
+          echo "Region: ${{ env.AWS_REGION }}"
+          echo "Time: $(date)"
+
+      - name: 🚨 Deployment failed notification
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Check the logs above for details."

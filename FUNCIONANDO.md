@@ -1,12 +1,14 @@
 # 🎉 ¡Alexa ChatGPT Calendar Skill - FUNCIONANDO!
 
-## ✅ Estado Actual: COMPLETAMENTE OPERATIVO
+## ✅ Estado Actual: COMPLETAMENTE OPERATIVO CON INTERFAZ VISUAL APL
 
-**¡Felicitaciones!** Tu aplicación está **funcionando correctamente** y accesible en:
+**¡Felicitaciones!** Tu aplicación está **funcionando correctamente** y ahora incluye **interfaz visual para Echo Show**:
 
-- 🌐 **Frontend**: http://localhost:3000
+- 🌐 **Frontend Web**: http://localhost:3000
 - 🔧 **Backend API**: http://localhost:3001
 - ⚙️ **Configuración**: http://localhost:3000/setup
+- 🗣️ **Alexa Skill**: Instalada con soporte APL visual
+- 📱 **Interfaz Echo Show**: Calendario visual implementado
 
 ## 🚀 Acceso Inmediato
 
@@ -97,11 +99,15 @@ Invoke-WebRequest http://localhost:3000
 - **Base de datos MongoDB** con Mongoose ODM
 - **Sistema de recompensas** automático
 
-### 🗣️ Alexa Skills (Configuración Opcional)
+### 🗣️ Alexa Skills con Interfaz Visual APL
 - **Comandos en español** naturales
 - **Creación de tareas** por voz
 - **Consulta de agenda** hablada
 - **Integración ChatGPT** para consultas
+- **Interfaz visual APL** para Echo Show/Spot/Hub
+- **Pantalla de bienvenida** con logo y opciones
+- **Lista visual de tareas** con scroll y formato
+- **Detección automática** de dispositivos con pantalla
 - **Archivos de configuración** listos en `/alexa-skill/`
 
 ## 🏆 Logros del Sistema
@@ -117,13 +123,72 @@ El sistema incluye un completo sistema de gamificación:
 - 🌙 **Búho Nocturno**: Tarea después de las 10 PM
 - 🎨 **Variedad**: Tareas de 3 categorías diferentes
 
-## 🎯 Próximos Pasos Sugeridos
+## 🎯 Próximos Pasos: Activar Interfaz Visual en Alexa
 
-1. **Probar la interfaz** en http://localhost:3000
+### 🚨 PASO CRÍTICO: Subir Código APL a Lambda
+
+El archivo `lambda-apl.zip` (25.97 MB) contiene el código actualizado con soporte visual. **Debes subirlo a AWS Lambda**:
+
+1. **Ir a AWS Lambda Console**: https://console.aws.amazon.com/lambda
+2. **Seleccionar** tu función `alexa-chatgpt-calendar`
+3. **Ir a pestaña** "Code" (Código)
+4. **Click en** "Upload from" → ".zip file"
+5. **Seleccionar** el archivo `lambda-apl.zip` (está en la raíz del proyecto)
+6. **Click** "Save" (Guardar)
+7. **Esperar** 2-3 minutos mientras se despliega (verás el progress bar)
+
+### 🧪 Probar la Interfaz Visual
+
+Una vez subido el código a Lambda:
+## 📦 Archivos de Despliegue Disponibles
+
+- **`lambda-apl.zip`** (25.97 MB) - ⭐ **USAR ESTE** - Código con interfaz visual APL
+- **`lambda-deployment.zip`** (19.73 MB) - Versión anterior sin APL (no usar)
+
+## 🎊 ¡Felicitaciones!
+
+Has instalado exitosamente un **sistema completo de gestión de calendario con inteligencia artificial**. La aplicación incluye:
+
+- ✅ Frontend React moderno y responsive
+- ✅ Backend API completo con Express.js
+- ✅ Integración con ChatGPT lista para usar
+- ✅ Sistema de Alexa Skills configurado con APL
+- ✅ **Interfaz visual para Echo Show** (pantallas de bienvenida y tareas)
+- ✅ **Detección automática de dispositivos** con pantalla
+- ✅ Base de datos MongoDB preparada
+- ✅ Sistema de gamificación implementado
+- ✅ Documentación completa
+
+**¡Disfruta tu nuevo asistente inteligente de productividad con interfaz visual!** 🚀📱
+- ✅ **Echo Show 5** (5.5" display)
+- ✅ **Echo Show 8** (8" display)
+- ✅ **Echo Show 10** (10.1" display)
+- ✅ **Echo Show 15** (15.6" wall display)
+- ✅ **Echo Spot** (circular display)
+- ✅ **Fire TV devices**
+- ❌ **Echo Dot, Echo, Echo Studio** (sin pantalla - solo voz)
+
+### 🎨 Características de la Interfaz Visual
+
+**Pantalla de Bienvenida:**
+- Logo y título "Calendario Inteligente con ChatGPT"
+- Lista de características con checkmarks
+- Diseño azul (#00CAFF) moderno
+- Responsive a diferentes tamaños de pantalla
+
+**Lista de Tareas:**
+- Tarjetas visuales para cada tarea
+- Título y fecha con emojis
+- Lista scrollable para muchas tareas
+- Adaptable a diferentes resoluciones
+
+### 🔧 Otros Pasos Opcionales
+
+1. **Probar la interfaz web** en http://localhost:3000
 2. **Revisar configuración** en http://localhost:3000/setup
 3. **Configurar MongoDB** para persistencia (opcional)
 4. **Añadir OpenAI API** para ChatGPT (opcional)
-5. **Configurar Alexa Skill** para comandos de voz (opcional)
+5. **Probar en Echo Show real** si tienes uno disponible
 
 ## 🆘 Soporte
 

@@ -1,0 +1,82 @@
+name: Deploy Frontend to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'client/**'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  S3_BUCKET: alexa-calendar-frontend
+  NODE_VERSION: '18'
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: 📦 Install dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: 🏗️ Build React app
+        working-directory: ./client
+        env:
+          CI: false
+          REACT_APP_API_URL: ${{ secrets.BACKEND_API_URL }}
+        run: npm run build
+
+      - name: 🔑 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 🚀 Deploy to S3
+        working-directory: ./client/build
+        run: |
+          aws s3 sync . s3://${{ env.S3_BUCKET }} \
+            --delete \
+            --cache-control "public, max-age=31536000" \
+            --exclude "*.html" \
+            --no-cli-pager
+          
+          # HTML files without cache
+          aws s3 sync . s3://${{ env.S3_BUCKET }} \
+            --exclude "*" \
+            --include "*.html" \
+            --cache-control "no-cache" \
+            --no-cli-pager
+
+      - name: 🔄 Invalidate CloudFront cache (if configured)
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*" \
+            --no-cli-pager
+
+      - name: 💬 Deployment summary
+        if: success()
+        run: |
+          echo "🎉 Frontend deployed successfully!"
+          echo "S3 Bucket: ${{ env.S3_BUCKET }}"
+          echo "Region: ${{ env.AWS_REGION }}"
+          if [ -n "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+            echo "CloudFront: Cache invalidated"
+          fi

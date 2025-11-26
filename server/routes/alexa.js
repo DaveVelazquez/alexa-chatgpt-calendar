@@ -17,10 +17,93 @@ const LaunchRequestHandler = {
   handle(handlerInput) {
     const speakOutput = 'Bienvenido a tu asistente de calendario con ChatGPT. ¿En qué puedo ayudarte hoy?';
     
-    return handlerInput.responseBuilder
+    const hasDisplay = handlerInput.requestEnvelope.context &&
+                      handlerInput.requestEnvelope.context.System &&
+                      handlerInput.requestEnvelope.context.System.device &&
+                      handlerInput.requestEnvelope.context.System.device.supportedInterfaces &&
+                      handlerInput.requestEnvelope.context.System.device.supportedInterfaces['Alexa.Presentation.APL'];
+    
+    const responseBuilder = handlerInput.responseBuilder
       .speak(speakOutput)
-      .reprompt(speakOutput)
-      .getResponse();
+      .reprompt(speakOutput);
+    
+    if (hasDisplay) {
+      const aplDocument = {
+        type: 'APL',
+        version: '1.8',
+        mainTemplate: {
+          items: [
+            {
+              type: 'Container',
+              width: '100vw',
+              height: '100vh',
+              direction: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              items: [
+                {
+                  type: 'Text',
+                  text: '📅 Calendario Inteligente',
+                  fontSize: '70dp',
+                  fontWeight: 'bold',
+                  color: '#00CAFF',
+                  textAlign: 'center'
+                },
+                {
+                  type: 'Text',
+                  text: 'con ChatGPT',
+                  fontSize: '40dp',
+                  color: '#FFFFFF',
+                  textAlign: 'center',
+                  paddingTop: '10dp',
+                  paddingBottom: '40dp'
+                },
+                {
+                  type: 'Text',
+                  text: '✓ Gestiona tareas',
+                  fontSize: '28dp',
+                  color: '#AAAAAA',
+                  textAlign: 'center',
+                  paddingTop: '10dp'
+                },
+                {
+                  type: 'Text',
+                  text: '✓ Consulta a ChatGPT',
+                  fontSize: '28dp',
+                  color: '#AAAAAA',
+                  textAlign: 'center',
+                  paddingTop: '10dp'
+                },
+                {
+                  type: 'Text',
+                  text: '✓ Organiza tu día',
+                  fontSize: '28dp',
+                  color: '#AAAAAA',
+                  textAlign: 'center',
+                  paddingTop: '10dp',
+                  paddingBottom: '40dp'
+                },
+                {
+                  type: 'Text',
+                  text: '¿En qué puedo ayudarte?',
+                  fontSize: '32dp',
+                  color: '#FFFFFF',
+                  textAlign: 'center',
+                  paddingTop: '20dp'
+                }
+              ]
+            }
+          ]
+        }
+      };
+      
+      responseBuilder.addDirective({
+        type: 'Alexa.Presentation.APL.RenderDocument',
+        document: aplDocument
+      });
+    }
+    
+    return responseBuilder.getResponse();
   }
 };
 
@@ -136,40 +219,131 @@ const GetTasksIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'GetTasksIntent';
   },
   async handle(handlerInput) {
-    
     try {
-      if (intentName === 'AddTaskIntent') {
-        const task = handlerInput.requestEnvelope.request.intent.slots.task.value;
-        const date = handlerInput.requestEnvelope.request.intent.slots.date.value;
+      const axios = require('axios');
+      const response = await axios.get('http://localhost:3001/api/calendar/tasks');
+      const tasks = response.data;
+      
+      let speakOutput = tasks.length > 0 
+        ? 'Tus próximas tareas son: ' 
+        : 'No tienes tareas programadas.';
+      
+      tasks.forEach((task, index) => {
+        speakOutput += `${index + 1}. ${task.title} para el ${task.date}. `;
+      });
+      
+      // Verificar si el dispositivo tiene pantalla
+      const hasDisplay = handlerInput.requestEnvelope.context &&
+                        handlerInput.requestEnvelope.context.System &&
+                        handlerInput.requestEnvelope.context.System.device &&
+                        handlerInput.requestEnvelope.context.System.device.supportedInterfaces &&
+                        handlerInput.requestEnvelope.context.System.device.supportedInterfaces['Alexa.Presentation.APL'];
+      
+      const responseBuilder = handlerInput.responseBuilder
+        .speak(speakOutput)
+        .withShouldEndSession(false);
+      
+      // Si tiene pantalla, agregar contenido visual
+      if (hasDisplay && tasks.length > 0) {
+        const aplDocument = {
+          type: 'APL',
+          version: '1.8',
+          mainTemplate: {
+            parameters: ['payload'],
+            items: [
+              {
+                type: 'Container',
+                width: '100vw',
+                height: '100vh',
+                direction: 'column',
+                alignItems: 'center',
+                justifyContent: 'start',
+                items: [
+                  {
+                    type: 'Text',
+                    text: '📅 Mis Tareas',
+                    fontSize: '60dp',
+                    fontWeight: 'bold',
+                    color: '#FFFFFF',
+                    textAlign: 'center',
+                    paddingTop: '40dp',
+                    paddingBottom: '20dp'
+                  },
+                  {
+                    type: 'Sequence',
+                    width: '90vw',
+                    height: '70vh',
+                    data: '${payload.tasks}',
+                    numbered: true,
+                    items: [
+                      {
+                        type: 'Container',
+                        direction: 'row',
+                        alignItems: 'center',
+                        width: '100%',
+                        height: '80dp',
+                        paddingLeft: '20dp',
+                        paddingRight: '20dp',
+                        items: [
+                          {
+                            type: 'Text',
+                            text: '${ordinal}.',
+                            fontSize: '30dp',
+                            color: '#00CAFF',
+                            width: '50dp'
+                          },
+                          {
+                            type: 'Container',
+                            direction: 'column',
+                            width: '0',
+                            grow: 1,
+                            items: [
+                              {
+                                type: 'Text',
+                                text: '${data.title}',
+                                fontSize: '28dp',
+                                fontWeight: 'bold',
+                                color: '#FFFFFF'
+                              },
+                              {
+                                type: 'Text',
+                                text: '📆 ${data.date}',
+                                fontSize: '20dp',
+                                color: '#AAAAAA'
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        };
         
-        const axios = require('axios');
-        await axios.post('http://localhost:3001/api/calendar/tasks', {
-          title: task,
-          date: date
+        const aplDataSource = {
+          tasks: tasks.map(task => ({
+            title: task.title,
+            date: task.date,
+            completed: task.completed || false
+          }))
+        };
+        
+        responseBuilder.addDirective({
+          type: 'Alexa.Presentation.APL.RenderDocument',
+          document: aplDocument,
+          datasources: {
+            payload: aplDataSource
+          }
         });
-        
-        const speakOutput = `He agregado la tarea "${task}" para el ${date}.`;
-        
-        return handlerInput.responseBuilder
-          .speak(speakOutput)
-          .getResponse();
-      } else {
-        // GetTasksIntent
-        const axios = require('axios');
-        const response = await axios.get('http://localhost:3001/api/calendar/tasks');
-        const tasks = response.data;
-        
-        let speakOutput = 'Tus próximas tareas son: ';
-        tasks.forEach((task, index) => {
-          speakOutput += `${index + 1}. ${task.title} para el ${task.date}. `;
-        });
-        
-        return handlerInput.responseBuilder
-          .speak(speakOutput)
-          .getResponse();
       }
+      
+      return responseBuilder.getResponse();
     } catch (error) {
-      const speakOutput = 'Hubo un problema con el calendario.';
+      console.error('GetTasksIntent Error:', error);
+      const speakOutput = 'Hubo un problema al consultar el calendario.';
       
       return handlerInput.responseBuilder
         .speak(speakOutput)
